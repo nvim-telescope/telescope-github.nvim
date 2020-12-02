@@ -1,4 +1,4 @@
-# telescope-github.nvim
+# Telescope-github.nvim
 Integration with [github cli](https://cli.github.com/)
 
 #### Installation
@@ -12,14 +12,14 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-github.nvim'
 
 ```
-# Setup
+## Setup
 
 ``` lua
 require('telescope').load_extension('ghcli')
 
 ```
 
-# Available commands
+## Available commands
 ```viml
 Telescope gh_issues
 Telescope gh_issues
@@ -32,15 +32,17 @@ lua require('telescope.builtin').gh_gist()<cr>
 
 ```
 
-# Options filter
+## Options 
+
+You can add more filter to issue in commands
 
 ```viml
-" author
+" filter with author and label
 Telescope gh_issues author=windwp label=bug
 ```
 
-## Pull Request
-### Options Filter
+### Pull Request
+#### Options Filter
 [Detail](https://cli.github.com/manual/gh_pr_list)
  
 | Query     | filter                             |
@@ -51,16 +53,16 @@ Telescope gh_issues author=windwp label=bug
 | base      | Filter by base branch              |
 | limit     | limit default = 100                |
 
-### Key mappings
+#### Key mappings
 
-| key   | Usage                 |
-|-------|-----------------------|
-| <cr>  | checkout pull request |
-| <c-t> | open web              |
+| key     | Usage                 |
+|---------|-----------------------|
+| `<cr>`  | checkout pull request |
+| `<c-t>` | open web              |
 
-## Issue
+### Issue
 
-### Options Filter
+#### Options Filter
 [Detail](https://cli.github.com/manual/gh_issue_list)
 
 | Query     | filter                             |
@@ -73,15 +75,16 @@ Telescope gh_issues author=windwp label=bug
 | state     | Filter by state: {open,closed,all} |
 | limit     | limit default = 100                |
 
-### Key mappings
+#### Key mappings
 
-| key   | Usage    |
-|-------|----------|
-| <cr>  | nothing  |
-| <c-t> | open web |
+| key     | Usage    |
+|---------|----------|
+| `<cr>`  | nothing  |
+| `<c-t>` | open web |
 
-## Gist
-### Options Filter
+### Gist
+#### Options Filter
+
 [Detail](https://cli.github.com/manual/gh_gist_list)
 | Query     | filter                             |
 |-----------|------------------------------------|
@@ -89,10 +92,10 @@ Telescope gh_issues author=windwp label=bug
 | secret    | Filter by secret                   |
 
 ### Key mappings
-| key   | Usage                 |
-|-------|-----------------------|
-| <cr>  | append gist to buffer |
-| <c-t> | open web              |
+| key     | Usage                 |
+|---------|-----------------------|
+| `<cr>`  | append gist to buffer |
+| `<c-t>` | open web              |
 
 
 
