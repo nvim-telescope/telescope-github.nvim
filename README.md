@@ -55,10 +55,11 @@ Telescope gh_issues author=windwp label=bug
 
 #### Key mappings
 
-| key     | Usage                 |
-|---------|-----------------------|
-| `<cr>`  | checkout pull request |
-| `<c-t>` | open web              |
+| key     | Usage                         |
+|---------|-------------------------------|
+| `<cr>`  | checkout pull request         |
+| `<c-e>` | toggle to view detail or diff |
+| `<c-t>` | open web                      |
 
 ### Issue
 

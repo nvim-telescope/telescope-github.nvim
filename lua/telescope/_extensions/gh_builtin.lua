@@ -75,18 +75,11 @@ B.gh_pull_request = function(opts)
       vim.split(cmd,' '),
       opts
     ),
-    previewer = previewers.new_termopen_previewer{
-      get_command = function(entry)
-        local tmp_table = vim.split(entry.value,"\t");
-        if vim.tbl_isempty(tmp_table) then
-          return {"echo", ""}
-        end
-        return { 'gh' ,'pr' ,'view',tmp_table[1] }
-      end
-    },
+    previewer = gh_p.gh_pr_preview.new(opts) ,
     sorter = conf.file_sorter(opts),
     attach_mappings = function(_,map)
       actions.goto_file_selection_edit:replace(gh_a.gh_pr_checkout)
+      map('i','<c-e>',gh_a.gh_pr_v_toggle)
       map('i','<c-t>',gh_a.gh_web_view('pr'))
       return true
     end

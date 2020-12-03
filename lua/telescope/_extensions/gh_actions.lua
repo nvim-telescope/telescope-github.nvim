@@ -1,6 +1,7 @@
 local actions = require('telescope.actions')
 local utils = require('telescope.utils')
 local Job = require('plenary.job')
+local state = require('telescope.state')
 
 local A ={}
 -- a for actions
@@ -45,6 +46,20 @@ A.gh_gist_append=function(prompt_bufnr)
   if text and vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
     vim.api.nvim_put(vim.split(text,'\n'), 'b', true, true)
   end
+end
+
+A.gh_pr_v_toggle = function(prompt_bufnr)
+  local status = state.get_status(prompt_bufnr)
+  if status.gh_pr_preview == 'diff' then
+    status.gh_pr_preview = 'detail'
+  else
+    status.gh_pr_preview = 'diff'
+  end
+  local entry = actions.get_selected_entry(prompt_bufnr)
+  actions.get_current_picker(prompt_bufnr).previewer:preview(
+      entry,
+      status
+  )
 end
 
 return A
