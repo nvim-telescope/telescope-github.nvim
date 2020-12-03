@@ -1,4 +1,3 @@
-
 local builtin = require('telescope.builtin')
 local gh_b= require('telescope._extensions.gh_builtin')
 
