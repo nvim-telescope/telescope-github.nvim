@@ -3,7 +3,6 @@ local utils = require('telescope.utils')
 local defaulter = utils.make_default_callable
 local flatten = vim.tbl_flatten
 
-local state = require('telescope.state')
 local bat_options = {"bat" , "--style=plain" , "--color=always" , "--paging=always" , '--decorations=never','--pager=less'}
 local P ={}
 
