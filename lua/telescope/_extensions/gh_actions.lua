@@ -12,13 +12,37 @@ A.gh_pr_checkout = function(prompt_bufnr)
   if vim.tbl_isempty(tmp_table) then
     return
   end
+
+  local qf_entry={}
+  local on_output = function(_, line)
+    table.insert(qf_entry,{
+        text = line
+      })
+  end
+
+  local completed = false
   local job = Job:new({
       enable_recording = true ,
       command = "gh",
-      args = {"pr", "checkout" ,tmp_table[1]}
+      args = {"pr", "checkout" ,tmp_table[1]},
+      on_stdout = on_output,
+      on_stderr = on_output,
+
+      on_exit = function(_,status)
+        if status == 0 then
+          completed=true
+        end
+      end,
     })
-  -- need to display result in quickfix
   job:sync()
+
+  if completed then
+    print("Pull request completed")
+  else
+    vim.fn.setqflist(qf_entry,"r")
+    vim.cmd[[copen]]
+  end
+
 end
 
 
