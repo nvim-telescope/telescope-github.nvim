@@ -13,14 +13,19 @@ A.gh_pr_checkout = function(prompt_bufnr)
     return
   end
 
-  local qf_entry={}
+  local qf_entry = {{
+      text="Checkout pull request, Please wait."
+  }}
+
   local on_output = function(_, line)
     table.insert(qf_entry,{
         text = line
       })
+    pcall(vim.schedule_wrap( function()
+      vim.fn.setqflist(qf_entry,"r")
+     end))
   end
 
-  local completed = false
   local job = Job:new({
       enable_recording = true ,
       command = "gh",
@@ -30,18 +35,22 @@ A.gh_pr_checkout = function(prompt_bufnr)
 
       on_exit = function(_,status)
         if status == 0 then
-          completed=true
+          pcall(vim.schedule_wrap( function()
+                vim.cmd[[cclose]]
+           end))
+           print("Pull request completed")
         end
       end,
     })
-  job:sync()
 
-  if completed then
-    print("Pull request completed")
-  else
-    vim.fn.setqflist(qf_entry,"r")
-    vim.cmd[[copen]]
-  end
+  vim.fn.setqflist(qf_entry,"r")
+  vim.cmd[[copen]]
+  local timer = vim.loop.new_timer()
+  timer:start(200, 0, vim.schedule_wrap(function()
+    -- increase timeout to 10000ms and wait interval to 20
+    -- default value is 5000ms and 10
+    job:sync(10000,20)
+  end))
 
 end
 
