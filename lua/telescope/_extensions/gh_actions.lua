@@ -14,7 +14,7 @@ A.gh_pr_checkout = function(prompt_bufnr)
   end
 
   local qf_entry = {{
-      text="Checkout pull request, Please wait."
+      text="Checking out pull request #" .. tmp_table[1] ..", please wait ..."
   }}
 
   local on_output = function(_, line)
