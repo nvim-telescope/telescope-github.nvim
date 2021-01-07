@@ -3,7 +3,11 @@ local finders = require('telescope.finders')
 local previewers = require('telescope.previewers')
 local pickers = require('telescope.pickers')
 local conf = require('telescope.config').values
+local make_entry = require('telescope.make_entry')
+local utils = require('telescope.utils')
+local popup=require('popup')
 
+local log = require('telescope.log')
 local gh_p= require('telescope._extensions.gh_previewers')
 local gh_a= require('telescope._extensions.gh_actions')
 
@@ -30,76 +34,126 @@ local function parse_opts(opts,target)
   return query
 end
 
+local function msgLoadingPopup(msg,cmd,complete_fn)
+  local row = math.floor((vim.o.lines-5) / 2)
+  local width = math.floor(vim.o.columns / 1.5)
+  local col = math.floor((vim.o.columns - width) / 2)
+  for _ = 1 , (width-#msg)/2 , 1 do
+    msg = " "..msg
+  end
+  local prompt_win, prompt_opts = popup.create(msg, {
+    border ={},
+    borderchars = conf.borderchars ,
+    height = 5,
+    col = col,
+    line = row,
+    width = width,
+  })
+  vim.api.nvim_win_set_option(prompt_win, 'winhl', 'Normal:TelescopeNormal')
+  vim.api.nvim_win_set_option(prompt_win, 'winblend', 0)
+  local prompt_border_win = prompt_opts.border and prompt_opts.border.win_id
+  if prompt_border_win then vim.api.nvim_win_set_option(prompt_border_win, 'winhl', 'Normal:TelescopePromptBorder') end
+  vim.defer_fn(vim.schedule_wrap(function()
+    local results = vim.split(utils.get_os_command_output(cmd), '\n')
+    if not pcall(vim.api.nvim_win_close, prompt_win, true) then
+      log.trace("Unable to close window: ", "ghcli", "/", prompt_win)
+    end
+    complete_fn(results)
+  end),10)
+end
+
 -- b for builtin function
 B.gh_issues = function(opts)
   opts = opts or {}
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts , 'issue')
   local cmd = vim.tbl_flatten({'gh' , 'issue' , 'list', opts_query})
-  pickers.new(opts , {
-    prompt_title = 'Issues',
-    finder = finders.new_oneshot_job(
-      cmd,
-      opts
-    ),
-    previewer = previewers.new_termopen_previewer{
-      get_command = function(entry)
-        local tmp_table = vim.split(entry.value,"\t");
-        if vim.tbl_isempty(tmp_table) then
-          return {"echo", ""}
-        end
-        return { 'gh' ,'issue' ,'view',tmp_table[1] }
-      end
-    },
-    sorter = conf.file_sorter(opts),
-    attach_mappings = function(_,map)
-      actions.goto_file_selection_edit:replace(actions.close)
-      map('i','<c-t>',gh_a.gh_web_view('issue'))
-      return true
+  local title = 'Issues'
+  msgLoadingPopup("Loading "..title, table.concat(cmd , ''), function (results)
+    if results[1]== "" then
+      print ('Empty ' .. title)
+      return
     end
-  }):find()
+    pickers.new(opts , {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_string(opts),
+        },
+        previewer = previewers.new_termopen_previewer{
+          get_command = function(entry)
+            local tmp_table = vim.split(entry.value,"\t");
+            if vim.tbl_isempty(tmp_table) then
+              return {"echo", ""}
+            end
+            return { 'gh' ,'issue' ,'view',tmp_table[1] }
+          end
+        },
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_,map)
+          actions.goto_file_selection_edit:replace(actions.close)
+          map('i','<c-t>',gh_a.gh_web_view('issue'))
+          return true
+        end
+      }):find()
+  end)
 end
+
 
 B.gh_pull_request = function(opts)
   opts = opts or {}
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts , 'pr')
   local cmd = vim.tbl_flatten({'gh' , 'pr' , 'list' , opts_query})
-  pickers.new(opts, {
-    prompt_title = 'Pull Requests' ,
-    finder = finders.new_oneshot_job(
-      cmd,
-      opts
-    ),
-    previewer = gh_p.gh_pr_preview.new(opts) ,
-    sorter = conf.file_sorter(opts),
-    attach_mappings = function(_,map)
-      actions.goto_file_selection_edit:replace(gh_a.gh_pr_checkout)
-      map('i','<c-e>',gh_a.gh_pr_v_toggle)
-      map('i','<c-t>',gh_a.gh_web_view('pr'))
-      return true
+  local title = 'Pull Requests'
+  msgLoadingPopup("Loading "..title, table.concat(cmd , ' '), function(results)
+    if results[1]== "" then
+      print ('Empty ' .. title)
+      return
     end
-  }):find()
+    pickers.new(opts, {
+        prompt_title =title ,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_string(opts),
+        },
+        previewer = gh_p.gh_pr_preview.new(opts) ,
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_,map)
+          actions.goto_file_selection_edit:replace(gh_a.gh_pr_checkout)
+          map('i','<c-e>',gh_a.gh_pr_v_toggle)
+          map('i','<c-t>',gh_a.gh_web_view('pr'))
+          return true
+        end
+      }):find()
+  end)
 end
 
 B.gh_gist = function(opts)
   opts = opts or {}
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts , 'gist')
+  local title = 'Gist'
   local cmd = vim.tbl_flatten({'gh' , 'gist' , 'list' , opts_query})
-  pickers.new(opts, {
-    prompt_title = 'gist list' ,
-    finder = finders.new_oneshot_job(
-      cmd,
-      opts
-    ),
-    previewer = gh_p.gh_gist_preview.new(opts),
-    sorter = conf.file_sorter(opts),
-    attach_mappings = function(_,map)
-      actions.goto_file_selection_edit:replace(gh_a.gh_gist_append)
-      map('i','<c-t>',gh_a.gh_web_view('gist'))
-      return true
+  msgLoadingPopup("Loading " .. title, table.concat(cmd,' '), function(results)
+    if results[1]== "" then
+      print ('Empty ' .. title)
+      return
     end
-  }):find()
+    pickers.new(opts, {
+        prompt_title = title ,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_string(opts),
+        },
+        previewer = gh_p.gh_gist_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_,map)
+          actions.goto_file_selection_edit:replace(gh_a.gh_gist_append)
+          map('i','<c-t>',gh_a.gh_web_view('gist'))
+          return true
+        end
+      }):find()
+    end)
 end
 return B
