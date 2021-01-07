@@ -35,6 +35,7 @@ local function parse_opts(opts,target)
 end
 
 local function msgLoadingPopup(msg,cmd,complete_fn)
+  print(vim.inspect(cmd))
   local row = math.floor((vim.o.lines-5) / 2)
   local width = math.floor(vim.o.columns / 1.5)
   local col = math.floor((vim.o.columns - width) / 2)
@@ -69,7 +70,7 @@ B.gh_issues = function(opts)
   local opts_query = parse_opts(opts , 'issue')
   local cmd = vim.tbl_flatten({'gh' , 'issue' , 'list', opts_query})
   local title = 'Issues'
-  msgLoadingPopup("Loading "..title, table.concat(cmd , ''), function (results)
+  msgLoadingPopup("Loading "..title, table.concat(cmd , ' '), function (results)
     if results[1]== "" then
       print ('Empty ' .. title)
       return
