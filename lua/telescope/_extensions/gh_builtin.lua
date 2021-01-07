@@ -35,7 +35,6 @@ local function parse_opts(opts,target)
 end
 
 local function msgLoadingPopup(msg,cmd,complete_fn)
-  print(vim.inspect(cmd))
   local row = math.floor((vim.o.lines-5) / 2)
   local width = math.floor(vim.o.columns / 1.5)
   local col = math.floor((vim.o.columns - width) / 2)
