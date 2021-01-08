@@ -15,36 +15,36 @@ Plug 'nvim-telescope/telescope-github.nvim'
 ## Setup
 
 ``` lua
-require('telescope').load_extension('ghcli')
+require('telescope').load_extension('gh')
 
 ```
 
 ## Available commands
 ```viml
-Telescope gh_issues
-Telescope gh_issues
-Telescope gh_gist
+Telescope gh issues
+Telescope gh pull_request
+Telescope gh gist
 
 "Using lua function
-lua require('telescope.builtin').gh_issues()<cr>
-lua require('telescope.builtin').gh_pull_request()<cr>
-lua require('telescope.builtin').gh_gist()<cr>
+lua require('telescope.builtin').extensions.issues()<cr>
+lua require('telescope.builtin').extensions.pull_request()<cr>
+lua require('telescope.builtin').extensions.gist()<cr>
 
 ```
 
-## Options 
+## Options
 
 You can add more filter to issue in commands
 
 ```viml
 " filter with author and label
-Telescope gh_issues author=windwp label=bug
+Telescope gh issues author=windwp label=bug
 ```
 
 ### Pull Request
 #### Options Filter
 [Detail](https://cli.github.com/manual/gh_pr_list)
- 
+
 | Query     | filter                             |
 |-----------|------------------------------------|
 | assignee  | Filter by assignee                 |
