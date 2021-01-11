@@ -58,8 +58,11 @@ Telescope gh issues author=windwp label=bug
 | key     | Usage                         |
 |---------|-------------------------------|
 | `<cr>`  | checkout pull request         |
-| `<c-e>` | toggle to view detail or diff |
 | `<c-t>` | open web                      |
+| `<c-e>` | toggle to view detail or diff |
+| `<c-m>` | merge pull Request            |
+| `<c-r>` | merge rebase pull Request     |
+| `<c-s>` | merge squash pull Request     |
 
 ### Issue
 

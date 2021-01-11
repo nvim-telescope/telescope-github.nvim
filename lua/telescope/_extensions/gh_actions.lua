@@ -2,19 +2,23 @@ local actions = require('telescope.actions')
 local utils = require('telescope.utils')
 local Job = require('plenary.job')
 local state = require('telescope.state')
+local flatten = vim.tbl_flatten
 
 local A ={}
--- a for actions
-A.gh_pr_checkout = function(prompt_bufnr)
+
+local function close_telescope_prompt(prompt_bufnr)
   local selection = actions.get_selected_entry(prompt_bufnr)
   actions.close(prompt_bufnr)
   local tmp_table = vim.split(selection.value,"\t");
   if vim.tbl_isempty(tmp_table) then
     return
   end
+  return tmp_table[1]
+end
+local function gh_qf_action(pr_number, action, msg)
 
   local qf_entry = {{
-      text="Checking out pull request #" .. tmp_table[1] ..", please wait ..."
+      text = msg .. pr_number ..", please wait ..."
   }}
 
   local on_output = function(_, line)
@@ -25,11 +29,10 @@ A.gh_pr_checkout = function(prompt_bufnr)
       vim.fn.setqflist(qf_entry,"r")
      end))
   end
-
   local job = Job:new({
       enable_recording = true ,
       command = "gh",
-      args = {"pr", "checkout" ,tmp_table[1]},
+      args = flatten{"pr" ,action , pr_number},
       on_stdout = on_output,
       on_stderr = on_output,
 
@@ -51,7 +54,10 @@ A.gh_pr_checkout = function(prompt_bufnr)
     -- default value is 5000ms and 10
     job:sync(10000,20)
   end))
-
+end
+-- a for actions
+A.gh_pr_checkout = function(prompt_bufnr)
+  gh_qf_action(prompt_bufnr , 'checkout','Checking out pull request #')
 end
 
 
@@ -93,6 +99,32 @@ A.gh_pr_v_toggle = function(prompt_bufnr)
       entry,
       status
   )
+end
+
+
+A.gh_pr_merge = function(prompt_bufnr)
+  local pr_number = close_telescope_prompt(prompt_bufnr)
+  local confirm = vim.fn.input('Are you sure you want to merge #'..pr_number .. ' ? (yes/y) : ')
+  if confirm =='yes' or confirm =='y' then
+    gh_qf_action(pr_number,{ 'merge', '-m'}, 'Merge pull request #')
+  end
+end
+
+
+A.gh_pr_merge_rebase = function(prompt_bufnr)
+  local pr_number = close_telescope_prompt(prompt_bufnr)
+  local confirm = vim.fn.input('Are you sure you want to merge rebase  #'..pr_number .. ' ? (yes/y) : ')
+  if confirm =='yes' or confirm =='y' then
+    gh_qf_action(pr_number,{ 'merge', '-r'}, 'Merge rebase pull request #')
+  end
+end
+
+A.gh_pr_merge_squash = function(prompt_bufnr)
+  local pr_number = close_telescope_prompt(prompt_bufnr)
+  local confirm = vim.fn.input('Are you sure you want to merge rebase #'..pr_number .. ' ? (yes/y) : ')
+  if confirm =='yes' or confirm =='y' then
+    gh_qf_action(pr_number, {'merge', '-s'}, 'Merge squash pull request #')
+  end
 end
 
 return A
