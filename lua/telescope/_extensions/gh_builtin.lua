@@ -122,6 +122,9 @@ B.gh_pull_request = function(opts)
         attach_mappings = function(_,map)
           actions.goto_file_selection_edit:replace(gh_a.gh_pr_checkout)
           map('i','<c-e>',gh_a.gh_pr_v_toggle)
+          map('i','<c-m>',gh_a.gh_pr_merge)
+          map('i','<c-r>',gh_a.gh_pr_merge_rebase)
+          map('i','<c-s>',gh_a.gh_pr_merge_squash)
           map('i','<c-t>',gh_a.gh_web_view('pr'))
           return true
         end
