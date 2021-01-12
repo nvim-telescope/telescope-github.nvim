@@ -17,6 +17,10 @@ local function close_telescope_prompt(prompt_bufnr)
 end
 local function gh_qf_action(pr_number, action, msg)
 
+  if pr_number==nil then
+    return
+  end
+
   local qf_entry = {{
       text = msg .. pr_number ..", please wait ..."
   }}
@@ -57,7 +61,8 @@ local function gh_qf_action(pr_number, action, msg)
 end
 -- a for actions
 A.gh_pr_checkout = function(prompt_bufnr)
-  gh_qf_action(prompt_bufnr , 'checkout','Checking out pull request #')
+  local pr_number = close_telescope_prompt(prompt_bufnr)
+  gh_qf_action(pr_number , 'checkout','Checking out pull request #')
 end
 
 
@@ -104,27 +109,17 @@ end
 
 A.gh_pr_merge = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
-  local confirm = vim.fn.input('Are you sure you want to merge #'..pr_number .. ' ? (yes/y) : ')
-  if confirm =='yes' or confirm =='y' then
-    gh_qf_action(pr_number,{ 'merge', '-m'}, 'Merge pull request #')
-  end
+    local type=vim.fn.input('What kind of merge ([m]erge / [s]quash / [r]ebase) : ')
+    local action = nil
+    if type == "merge" or type == 'm' then
+      action = '-m'
+    elseif type == "rebase" or type == 'r' then
+      action = '-s'
+    elseif type == "squash" or type == 's' then
+      action = '-s'
+    end
+    if action ~= nil then
+      gh_qf_action(pr_number,{ 'merge', action}, 'Merge pull request #')
+    end
 end
-
-
-A.gh_pr_merge_rebase = function(prompt_bufnr)
-  local pr_number = close_telescope_prompt(prompt_bufnr)
-  local confirm = vim.fn.input('Are you sure you want to merge rebase  #'..pr_number .. ' ? (yes/y) : ')
-  if confirm =='yes' or confirm =='y' then
-    gh_qf_action(pr_number,{ 'merge', '-r'}, 'Merge rebase pull request #')
-  end
-end
-
-A.gh_pr_merge_squash = function(prompt_bufnr)
-  local pr_number = close_telescope_prompt(prompt_bufnr)
-  local confirm = vim.fn.input('Are you sure you want to merge rebase #'..pr_number .. ' ? (yes/y) : ')
-  if confirm =='yes' or confirm =='y' then
-    gh_qf_action(pr_number, {'merge', '-s'}, 'Merge squash pull request #')
-  end
-end
-
 return A
