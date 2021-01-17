@@ -54,7 +54,7 @@ local function msgLoadingPopup(msg,cmd,complete_fn)
   local prompt_border_win = prompt_opts.border and prompt_opts.border.win_id
   if prompt_border_win then vim.api.nvim_win_set_option(prompt_border_win, 'winhl', 'Normal:TelescopePromptBorder') end
   vim.defer_fn(vim.schedule_wrap(function()
-    local results = vim.split(utils.get_os_command_output(cmd), '\n')
+    local results = utils.get_os_command_output(cmd)
     if not pcall(vim.api.nvim_win_close, prompt_win, true) then
       log.trace("Unable to close window: ", "ghcli", "/", prompt_win)
     end
@@ -69,7 +69,7 @@ B.gh_issues = function(opts)
   local opts_query = parse_opts(opts , 'issue')
   local cmd = vim.tbl_flatten({'gh' , 'issue' , 'list', opts_query})
   local title = 'Issues'
-  msgLoadingPopup("Loading "..title, table.concat(cmd , ' '), function (results)
+  msgLoadingPopup("Loading " .. title, cmd, function (results)
     if results[1]== "" then
       print ('Empty ' .. title)
       return
@@ -106,7 +106,7 @@ B.gh_pull_request = function(opts)
   local opts_query = parse_opts(opts , 'pr')
   local cmd = vim.tbl_flatten({'gh' , 'pr' , 'list' , opts_query})
   local title = 'Pull Requests'
-  msgLoadingPopup("Loading "..title, table.concat(cmd , ' '), function(results)
+  msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1]== "" then
       print ('Empty ' .. title)
       return
@@ -137,7 +137,7 @@ B.gh_gist = function(opts)
   local opts_query = parse_opts(opts , 'gist')
   local title = 'Gist'
   local cmd = vim.tbl_flatten({'gh' , 'gist' , 'list' , opts_query})
-  msgLoadingPopup("Loading " .. title, table.concat(cmd,' '), function(results)
+  msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1]== "" then
       print ('Empty ' .. title)
       return
