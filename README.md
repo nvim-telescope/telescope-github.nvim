@@ -26,9 +26,9 @@ Telescope gh pull_request
 Telescope gh gist
 
 "Using lua function
-lua require('telescope.builtin').extensions.issues()<cr>
-lua require('telescope.builtin').extensions.pull_request()<cr>
-lua require('telescope.builtin').extensions.gist()<cr>
+lua require('telescope').extensions.gh.issues()<cr>
+lua require('telescope').extensions.gh.pull_request()<cr>
+lua require('telescope').extensions.gh.gist()<cr>
 
 ```
 
