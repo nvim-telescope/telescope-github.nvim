@@ -33,10 +33,6 @@ P.gh_pr_preview = defaulter(function(opts)
         local result ={ 'gh' , 'pr' , 'view' , tmp_table[1] }
         if status.gh_pr_preview == 'diff' then
           result ={ 'gh' , 'pr' , 'diff' , tmp_table[1]}
-          if vim.fn.executable("bat") then
-            table.insert(result , "|")
-            table.insert(result , bat_options)
-          end
         end
         if vim.tbl_isempty(tmp_table) then
           return {"echo" , ""}
