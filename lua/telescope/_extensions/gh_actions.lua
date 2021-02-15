@@ -86,9 +86,9 @@ A.gh_gist_append=function(prompt_bufnr)
     return
   end
   local gist_id = tmp_table[1]
-  local text = utils.get_os_command_output('gh gist view ' .. gist_id .. ' -r')
+  local text = utils.get_os_command_output({'gh' , 'gist', 'view', gist_id, '-r'})
   if text and vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
-    vim.api.nvim_put(vim.split(text,'\n'), 'b', true, true)
+    vim.api.nvim_put(text, 'b', true, true)
   end
 end
 
