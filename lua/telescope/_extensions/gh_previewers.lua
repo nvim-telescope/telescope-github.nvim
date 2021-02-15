@@ -1,45 +1,62 @@
 local previewers = require('telescope.previewers')
 local utils = require('telescope.utils')
 local defaulter = utils.make_default_callable
-local flatten = vim.tbl_flatten
+local putils = require('telescope.previewers.utils')
 
-local bat_options = {"bat" , "--style=plain" , "--color=always" , "--paging=always" , '--decorations=never','--pager=less'}
 local P ={}
 
 -- p for preview
 P.gh_gist_preview = defaulter(function(opts)
-    return previewers.new_termopen_previewer {
-        get_command = opts.get_command or function(entry)
-        local tmp_table = vim.split(entry.value,"\t");
-        if vim.tbl_isempty(tmp_table) then
-          return {"echo", ""}
-        end
-        local result={ 'gh' ,'gist' ,'view',tmp_table[1] ,'|'}
-        if vim.fn.executable("bat") then
-          table.insert(result , bat_options)
-        else
-          table.insert(result , "less")
-        end
-        -- print(vim.inspect(result))
-        return flatten(result)
+
+  return previewers.new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.value
+    end,
+
+    define_preview = function(self, entry)
+      local tmp_table = vim.split(entry.value,"\t");
+      local gh_command={ 'gh' ,'gist' ,'view',tmp_table[1]}
+
+      if vim.tbl_isempty(tmp_table) then
+        gh_command {"echo" , "empty"}
       end
+      putils.job_maker(gh_command, self.state.bufnr, {
+        value = entry.value,
+        bufname = self.state.bufname,
+        cwd = opts.cwd,
+      })
+      putils.regex_highlighter(self.state.bufnr,"text")
+    end
   }
 end, {})
 
 P.gh_pr_preview = defaulter(function(opts)
-    return previewers.new_termopen_previewer {
-        get_command = opts.get_command or function(entry, status)
-        local tmp_table = vim.split(entry.value,"\t");
-        local result ={ 'gh' , 'pr' , 'view' , tmp_table[1] }
-        if status.gh_pr_preview == 'diff' then
-          result ={ 'gh' , 'pr' , 'diff' , tmp_table[1]}
-        end
-        if vim.tbl_isempty(tmp_table) then
-          return {"echo" , ""}
-        end
-        -- print(vim.inspect(result))
-        return flatten(result)
+
+  return previewers.new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.value
+    end,
+
+    define_preview = function(self, entry, status)
+      local tmp_table = vim.split(entry.value,"\t");
+      local gh_command ={ 'gh' , 'pr' , 'view' , tmp_table[1] }
+      local filetype = "markdown"
+      if status.gh_pr_preview == 'diff' then
+        gh_command = { 'gh' , 'pr' , 'diff' , tmp_table[1]}
+        filetype = "diff"
       end
+
+      if vim.tbl_isempty(tmp_table) then
+        gh_command {"echo" , "empty"}
+      end
+
+      putils.job_maker(gh_command, self.state.bufnr, {
+        value = entry.value .. filetype,
+        bufname = self.state.bufname,
+        cwd = opts.cwd
+      })
+      putils.regex_highlighter(self.state.bufnr,filetype)
+    end
   }
 end, {})
 return P
