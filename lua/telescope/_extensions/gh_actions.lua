@@ -1,4 +1,5 @@
 local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
 local utils = require('telescope.utils')
 local Job = require('plenary.job')
 local state = require('telescope.state')
@@ -7,7 +8,7 @@ local flatten = vim.tbl_flatten
 local A ={}
 
 local function close_telescope_prompt(prompt_bufnr)
-  local selection = actions.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry(prompt_bufnr)
   actions.close(prompt_bufnr)
   local tmp_table = vim.split(selection.value,"\t");
   if vim.tbl_isempty(tmp_table) then
@@ -68,7 +69,7 @@ end
 
 A.gh_web_view=function(type)
   return function(prompt_bufnr)
-    local selection = actions.get_selected_entry(prompt_bufnr)
+    local selection = action_state.get_selected_entry(prompt_bufnr)
     actions.close(prompt_bufnr)
     local tmp_table = vim.split(selection.value,"\t");
     if vim.tbl_isempty(tmp_table) then
@@ -79,7 +80,7 @@ A.gh_web_view=function(type)
 end
 
 A.gh_gist_append=function(prompt_bufnr)
-  local selection = actions.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry(prompt_bufnr)
   actions.close(prompt_bufnr)
   local tmp_table = vim.split(selection.value,"\t");
   if vim.tbl_isempty(tmp_table) then
@@ -99,7 +100,7 @@ A.gh_pr_v_toggle = function(prompt_bufnr)
   else
     status.gh_pr_preview = 'diff'
   end
-  local entry = actions.get_selected_entry(prompt_bufnr)
+  local entry = action_state.get_selected_entry(prompt_bufnr)
   actions.get_current_picker(prompt_bufnr).previewer:preview(
       entry,
       status
