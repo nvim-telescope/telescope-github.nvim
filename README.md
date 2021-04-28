@@ -24,11 +24,13 @@ require('telescope').load_extension('gh')
 Telescope gh issues
 Telescope gh pull_request
 Telescope gh gist
+Telescope gh run
 
 "Using lua function
 lua require('telescope').extensions.gh.issues()<cr>
 lua require('telescope').extensions.gh.pull_request()<cr>
 lua require('telescope').extensions.gh.gist()<cr>
+lua require('telescope').extensions.gh.run()<cr>
 
 ```
 
@@ -99,5 +101,19 @@ Telescope gh issues author=windwp label=bug
 | `<cr>`  | append gist to buffer |
 | `<c-t>` | open web              |
 
+### Workflow runs
+#### Options Filter
+[Detail](https://cli.github.com/manual/gh_run_list)
 
+| Query     | filter                             |
+|-----------|------------------------------------|
+| workflow  | Filter runs by workflow            |
+| limit     | limit default = 100                |
 
+#### Key mappings
+
+| key     | Usage                         |
+|---------|-------------------------------|
+| `<cr>`  | open run logs in a split      |
+| `<c-t>` | open web                      |
+| `<c-r>` | request run rerun             |

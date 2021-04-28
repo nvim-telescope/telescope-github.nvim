@@ -7,5 +7,6 @@ return require('telescope').register_extension {
       gist = gh_b.gh_gist ,
       issues = gh_b.gh_issues,
       pull_request = gh_b.gh_pull_request ,
+      run = gh_b.gh_run ,
     },
 }

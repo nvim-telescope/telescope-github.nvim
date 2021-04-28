@@ -123,4 +123,74 @@ A.gh_pr_merge = function(prompt_bufnr)
       gh_qf_action(pr_number,{ 'merge', action}, 'Merge pull request #')
     end
 end
+
+A.gh_run_web_view=function(prompt_bufnr)
+  local selection = action_state.get_selected_entry(prompt_bufnr)
+  actions.close(prompt_bufnr)
+  if selection.id == "" then
+    return
+  end
+  os.execute('gh run view --web ' .. selection.id)
+end
+
+A.gh_run_rerun=function(prompt_bufnr)
+  local selection = action_state.get_selected_entry(prompt_bufnr)
+  actions.close(prompt_bufnr)
+  if selection.id == "" then
+    return
+  end
+  print('Requested rerun of run: ', selection.id)
+  os.execute('gh run rerun ' .. selection.id)
+end
+
+A.gh_run_view_log=function(prompt_bufnr)
+  local selection = action_state.get_selected_entry(prompt_bufnr)
+  actions.close(prompt_bufnr)
+  if selection.id == "" then
+    return
+  end
+  local log_output = {}
+  vim.api.nvim_command('botright vnew')
+  local buf = vim.api.nvim_get_current_buf()
+
+  vim.api.nvim_buf_set_name(0, 'result #' .. buf)
+
+  vim.api.nvim_buf_set_option(0, 'buftype', 'nofile')
+  vim.api.nvim_buf_set_option(0, 'swapfile', false)
+  vim.api.nvim_buf_set_option(0, 'filetype', 'result')
+  vim.api.nvim_buf_set_option(0, 'bufhidden', 'wipe')
+
+  vim.api.nvim_command('setlocal wrap')
+  vim.api.nvim_command('setlocal cursorline')
+
+  local on_output = function(_, line)
+    table.insert(log_output,line)
+    pcall(vim.schedule_wrap( function()
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, log_output)
+     end))
+  end
+
+  local job = Job:new({
+      enable_recording = true ,
+      command = "gh",
+      args = flatten{"run", "view" , "--log", selection.id},
+      on_stdout = on_output,
+      on_stderr = on_output,
+
+      on_exit = function(_,status)
+        if status == 0 then
+           print("Log retrieval completed!")
+        end
+      end,
+    })
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {"Retrieving log, please wait..."})
+  local timer = vim.loop.new_timer()
+  timer:start(200, 0, vim.schedule_wrap(function()
+    -- increase timeout to 10000ms and wait interval to 20
+    -- default value is 5000ms and 10
+    job:sync(10000,20)
+  end))
+end
+
 return A
