@@ -10,6 +10,7 @@ local popup=require('popup')
 local log = require('telescope.log')
 local gh_p= require('telescope._extensions.gh_previewers')
 local gh_a= require('telescope._extensions.gh_actions')
+local gh_e= require('telescope._extensions.gh_make_entry')
 
 local B={ }
 
@@ -20,6 +21,8 @@ local function parse_opts(opts,target)
     tmp_table = {'author' , 'assigner' , 'mention' , 'label' , 'milestone' , 'state' , 'limit' }
   elseif target=='pr' then
     tmp_table = {'assigner' , 'label' , 'state' , 'base' , 'limit' }
+  elseif target=='run' then
+    tmp_table = {'workflow' , 'limit' }
   elseif target == 'gist' then
     tmp_table = {'public' , 'secret'}
     if opts.public then opts.public =' ' end
@@ -158,4 +161,34 @@ B.gh_gist = function(opts)
       }):find()
     end)
 end
+
+B.gh_run = function(opts)
+  opts = opts or {}
+  opts.limit = opts.limit or 100
+  local opts_query = parse_opts(opts , 'run')
+  local cmd = vim.tbl_flatten({'gh' , 'run' , 'list' , opts_query})
+  local title = 'Workflow runs'
+  msgLoadingPopup("Loading " .. title, cmd, function(results)
+    if results[1]== "" then
+      print ('Empty ' .. title)
+      return
+    end
+    pickers.new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = gh_e.gen_from_run(opts),
+        },
+        previewer = gh_p.gh_run_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_,map)
+          map('i','<c-r>',gh_a.gh_run_rerun)
+          map('i','<c-t>',gh_a.gh_run_web_view)
+          actions.select_default:replace(gh_a.gh_run_view_log)
+          return true
+        end
+      }):find()
+  end)
+end
+
 return B

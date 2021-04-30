@@ -59,4 +59,31 @@ P.gh_pr_preview = defaulter(function(opts)
     end
   }
 end, {})
+
+P.gh_run_preview = defaulter(function(opts)
+
+  return previewers.new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.id
+    end,
+
+    define_preview = function(self, entry)
+      local gh_command = {}
+
+      if entry.id then
+        gh_command ={ 'gh' , 'run' , 'view' , entry.id }
+      else
+        gh_command {"echo" , "empty"}
+      end
+
+      putils.job_maker(gh_command, self.state.bufnr, {
+        value = entry.value,
+        bufname = self.state.bufname,
+        cwd = opts.cwd
+      })
+      putils.regex_highlighter(self.state.bufnr, "text")
+    end
+  }
+end, {})
+
 return P
