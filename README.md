@@ -111,6 +111,7 @@ Telescope gh issues author=windwp label=bug
 | limit     | limit default = 100                                   |
 | wincmd    | Command to open log window, default = 'botright vnew' |
 | wrap      | Wrap lines in log window, default = 'nowrap'          |
+| filetype  | Filetype to use on log window, default='bash'         |
 | cleanmeta | Try to clean run log lines, default = 'true'          |
 
 #### Key mappings

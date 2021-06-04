@@ -167,6 +167,7 @@ B.gh_run = function(opts)
   opts.limit = opts.limit or 100
   opts.wincmd = opts.wincmd or 'botright vnew'
   opts.wrap = opts.wrap or 'nowrap'
+  opts.filetype = opts.filetype or 'bash'
   if opts.cleanmeta == nil then opts.cleanmeta = true end
   local opts_query = parse_opts(opts , 'run')
   local cmd = vim.tbl_flatten({'gh' , 'run' , 'list' , opts_query})

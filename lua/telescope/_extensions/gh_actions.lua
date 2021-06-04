@@ -159,7 +159,7 @@ A.gh_run_view_log=function(opts)
 
     vim.api.nvim_buf_set_option(0, 'buftype', 'nofile')
     vim.api.nvim_buf_set_option(0, 'swapfile', false)
-    vim.api.nvim_buf_set_option(0, 'filetype', 'result')
+    vim.api.nvim_buf_set_option(0, 'filetype', opts.filetype)
     vim.api.nvim_buf_set_option(0, 'bufhidden', 'wipe')
     vim.api.nvim_command('setlocal ' .. opts.wrap)
     vim.api.nvim_command('setlocal cursorline')
@@ -181,10 +181,17 @@ A.gh_run_view_log=function(opts)
       if not run_completed and string.find(line, "Refreshing") then
         log_output = {}
       end
-      if opts.cleanmeta and run_completed then
-        -- Lua doesn't support capture group quantifier
-        local tmp = string.gsub(line, "(.*\t)", "")
-        line = string.gsub(tmp, "(.*%d+Z)", "")
+      local cleanmsg = function(msgtoclean)
+        local msgwithoutdate = string.match(msgtoclean, 'T%d%d:%d%d:%d%d.%d+Z(.+)$')
+        if msgwithoutdate ~= nil then
+          return msgwithoutdate
+        else
+          return msgtoclean
+        end
+      end
+      local tbl_msg = vim.split(line, '\t', true)
+      if opts.cleanmeta and run_completed and #tbl_msg == 3 then
+        line = cleanmsg(tbl_msg[3])
       end
       table.insert(log_output, line)
 
