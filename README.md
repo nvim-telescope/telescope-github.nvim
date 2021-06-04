@@ -105,15 +105,19 @@ Telescope gh issues author=windwp label=bug
 #### Options Filter
 [Detail](https://cli.github.com/manual/gh_run_list)
 
-| Query     | filter                             |
-|-----------|------------------------------------|
-| workflow  | Filter runs by workflow            |
-| limit     | limit default = 100                |
+| Query     | filter                                                |
+|-----------|-------------------------------------------------------|
+| workflow  | Filter runs by workflow                               |
+| limit     | limit default = 100                                   |
+| wincmd    | Command to open log window, default = 'botright vnew' |
+| wrap      | Wrap lines in log window, default = 'nowrap'          |
+| filetype  | Filetype to use on log window, default='bash'         |
+| cleanmeta | Try to clean run log lines, default = 'true'          |
 
 #### Key mappings
 
-| key     | Usage                         |
-|---------|-------------------------------|
-| `<cr>`  | open run logs in a split      |
-| `<c-t>` | open web                      |
-| `<c-r>` | request run rerun             |
+| key     | Usage                                        |
+|---------|----------------------------------------------|
+| `<cr>`  | open workflow summary/run logs in new window |
+| `<c-t>` | open web                                     |
+| `<c-r>` | request run rerun                            |
