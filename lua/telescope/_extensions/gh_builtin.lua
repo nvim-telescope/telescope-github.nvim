@@ -127,6 +127,7 @@ B.gh_pull_request = function(opts)
           -- can't map to <c-m
           map('i','<c-r>',gh_a.gh_pr_merge)
           map('i','<c-t>',gh_a.gh_web_view('pr'))
+          map('i','<c-a>',gh_a.gh_pr_approve)
           actions.select_default:replace(gh_a.gh_pr_checkout)
           return true
         end
