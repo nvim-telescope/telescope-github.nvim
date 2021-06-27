@@ -124,6 +124,11 @@ A.gh_pr_merge = function(prompt_bufnr)
     end
 end
 
+A.gh_pr_approve = function(prompt_bufnr)
+  local pr_number = close_telescope_prompt(prompt_bufnr)
+  gh_qf_action(pr_number,{ 'review', '--approve'}, 'Approve pull request #')
+end
+
 A.gh_run_web_view=function(prompt_bufnr)
   local selection = action_state.get_selected_entry(prompt_bufnr)
   actions.close(prompt_bufnr)

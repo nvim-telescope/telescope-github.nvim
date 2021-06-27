@@ -63,6 +63,7 @@ Telescope gh issues author=windwp label=bug
 | `<c-t>` | open web                      |
 | `<c-e>` | toggle to view detail or diff |
 | `<c-r>` | merge request                 |
+| `<c-a>` | approve pull request          |
 
 ### Issue
 
