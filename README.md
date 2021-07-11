@@ -2,7 +2,7 @@
 Integration with [github cli](https://cli.github.com/)
 
 #### Installation
-you need to install github cli first
+you need to install github cli (version 1.11 or greater) first
 [Install Github cli](https://github.com/cli/cli#installation)
 
 ```viml

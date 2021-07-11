@@ -55,7 +55,13 @@ function gh_make_entry.gen_from_run(opts)
     local description = tmp_table[3] or ""
     local workflow = tmp_table[4] or ""
     local branch = tmp_table[5] or ""
-    local id = tmp_table[#tmp_table] or ""
+    local id = ""
+
+    if #tmp_table > 8 then 
+        id = tmp_table[7]
+    else
+        id = tmp_table[#tmp_table]
+    end
 
     return {
       value = description,
