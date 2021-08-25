@@ -6,7 +6,6 @@ you need to install github cli (version 1.11 or greater) first
 [Install Github cli](https://github.com/cli/cli#installation)
 
 ```viml
-Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-github.nvim'

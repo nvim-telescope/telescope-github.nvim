@@ -5,7 +5,7 @@ local pickers = require('telescope.pickers')
 local conf = require('telescope.config').values
 local make_entry = require('telescope.make_entry')
 local utils = require('telescope.utils')
-local popup=require('popup')
+local popup = require('plenary.popup')
 
 local log = require('telescope.log')
 local gh_p= require('telescope._extensions.gh_previewers')
