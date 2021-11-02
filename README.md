@@ -48,6 +48,7 @@ Telescope gh issues author=windwp label=bug
 
 | Query     | filter                             |
 |-----------|------------------------------------|
+| author    | Filter by author                   |
 | assignee  | Filter by assignee                 |
 | label     | Filter by label                    |
 | state     | Filter by state: {open,closed,all} |

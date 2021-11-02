@@ -20,7 +20,7 @@ local function parse_opts(opts,target)
   if target=='issue' then
     tmp_table = {'author' , 'assigner' , 'mention' , 'label' , 'milestone' , 'state' , 'limit' }
   elseif target=='pr' then
-    tmp_table = {'assigner' , 'label' , 'state' , 'base' , 'limit' }
+    tmp_table = {'author' , 'assigner' , 'label' , 'state' , 'base' , 'limit' }
   elseif target=='run' then
     tmp_table = {'workflow' , 'limit' }
   elseif target == 'gist' then
