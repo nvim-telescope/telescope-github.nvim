@@ -101,7 +101,7 @@ A.gh_pr_v_toggle = function(prompt_bufnr)
     status.gh_pr_preview = 'diff'
   end
   local entry = action_state.get_selected_entry(prompt_bufnr)
-  actions.get_current_picker(prompt_bufnr).previewer:preview(
+  action_state.get_current_picker(prompt_bufnr).previewer:preview(
       entry,
       status
   )
