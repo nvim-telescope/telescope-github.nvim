@@ -51,6 +51,7 @@ Telescope gh issues author=windwp label=bug
 | author    | Filter by author                   |
 | assignee  | Filter by assignee                 |
 | label     | Filter by label                    |
+| search    | Filter by query                    |
 | state     | Filter by state: {open,closed,all} |
 | base      | Filter by base branch              |
 | limit     | limit default = 100                |
@@ -77,6 +78,7 @@ Telescope gh issues author=windwp label=bug
 | mention   | Filter by mention                  |
 | label     | Filter by label                    |
 | milestone | Filter by milestone                |
+| search    | Filter by query                    |
 | state     | Filter by state: {open,closed,all} |
 | limit     | limit default = 100                |
 
