@@ -1,4 +1,5 @@
 local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
 local finders = require('telescope.finders')
 local previewers = require('telescope.previewers')
 local pickers = require('telescope.pickers')
@@ -128,12 +129,53 @@ B.gh_pull_request = function(opts)
           map('i','<c-r>',gh_a.gh_pr_merge)
           map('i','<c-t>',gh_a.gh_web_view('pr'))
           map('i','<c-a>',gh_a.gh_pr_approve)
+          map('i','<c-f>', function (prompt_bufnr)
+            local selection = action_state.get_selected_entry(prompt_bufnr)
+            actions.close(prompt_bufnr)
+            local pr_number = vim.split(selection.value,"\t")[1]
+
+            B.gh_pull_request_files(opts, pr_number)
+          end)
           actions.select_default:replace(gh_a.gh_pr_checkout)
           return true
         end
       }):find()
   end)
 end
+
+B.gh_pull_request_files = function(opts, pr_number)
+  opts = opts or {}
+  opts.limit = opts.limit or 100
+
+  local title_cmd = pr_number
+    and { 'gh', 'pr', 'view', pr_number, '--json', 'title', '--jq', '.title'}
+    or { 'gh', 'pr', 'view', '--json', 'title', '--jq', '.title'}
+
+  local cmd = pr_number
+    and { 'gh' , 'pr' , 'view', pr_number, '--json', "files", '--jq', '.files.[].path' }
+    or { 'gh' , 'pr' , 'view', '--json', "files", '--jq', '.files.[].path' }
+
+  local pr_title = '"' .. utils.get_os_command_output(title_cmd)[1] .. '"'
+  local title = 'Modified Files for ' .. pr_title
+
+  msgLoadingPopup("Loading " .. title, cmd, function(results)
+    if results[1]== "" then
+      print ('Empty ' .. title)
+      return
+    end
+    pickers.new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+            results = results,
+            entry_maker = make_entry.gen_from_file()
+        },
+        previewer = conf.file_previewer(opts),
+      }
+    ):find()
+  end)
+end
+
+
 
 B.gh_gist = function(opts)
   opts = opts or {}
