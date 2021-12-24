@@ -138,13 +138,22 @@ end
 
 A.gh_run_rerun = function(prompt_bufnr)
 	local selection = action_state.get_selected_entry(prompt_bufnr)
-	print(selection.id)
 	actions.close(prompt_bufnr)
 	if selection.id == "" then
 		return
 	end
 	print("Requested rerun of run: ", selection.id)
 	os.execute("gh run rerun " .. selection.id)
+end
+
+A.gh_run_cancel = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	if selection.id == "" or selection.active == "completed" then
+		return
+	end
+	print("Requested cancel of run: ", selection.id)
+	os.execute("gh run cancel " .. selection.id)
 end
 
 A.gh_run_view_log = function(opts)

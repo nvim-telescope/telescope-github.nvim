@@ -1,10 +1,23 @@
 # Telescope-github.nvim
 Integration with [github cli](https://cli.github.com/)
 
-#### Installation
-you need to install github cli (version 1.11 or greater) first
+### Installation
+you need to install github cli (version 2.2.0 or greater) first
 [Install Github cli](https://github.com/cli/cli#installation)
 
+#### Packer
+```lua
+use {
+    "nvim-telescope/telescope.nvim",
+    requires = {
+        { "nvim-lua/plenary.nvim" },
+        { "nvim-telescope/telescope-github.nvim" },
+    },
+}
+
+```
+
+#### vim-plug
 ```viml
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -124,3 +137,4 @@ Telescope gh issues author=windwp label=bug
 | `<cr>`  | open workflow summary/run logs in new window |
 | `<c-t>` | open web                                     |
 | `<c-r>` | request run rerun                            |
+| `<c-a>` | request run cancel                           |

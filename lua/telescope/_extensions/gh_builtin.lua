@@ -236,6 +236,7 @@ B.gh_run = function(opts)
 			attach_mappings = function(_, map)
 				map("i", "<c-r>", gh_a.gh_run_rerun)
 				map("i", "<c-t>", gh_a.gh_run_web_view)
+				map("i", "<c-a>", gh_a.gh_run_cancel)
 				actions.select_default:replace(gh_a.gh_run_view_log(opts))
 				return true
 			end,
