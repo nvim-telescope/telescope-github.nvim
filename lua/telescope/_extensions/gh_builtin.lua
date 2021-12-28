@@ -195,13 +195,16 @@ B.gh_gist = function(opts)
 			prompt_title = title,
 			finder = finders.new_table({
 				results = results,
-				entry_maker = make_entry.gen_from_string(opts),
+				entry_maker = gh_e.gen_from_gist(opts),
 			}),
 			previewer = gh_p.gh_gist_preview.new(opts),
 			sorter = conf.file_sorter(opts),
 			attach_mappings = function(_, map)
 				actions.select_default:replace(gh_a.gh_gist_append)
 				map("i", "<c-t>", gh_a.gh_web_view("gist"))
+				map("i", "<c-e>", gh_a.gh_gist_edit)
+				map("i", "<c-d>", gh_a.gh_gist_delete)
+				map("i", "<c-n>", gh_a.gh_gist_create)
 				return true
 			end,
 		}):find()

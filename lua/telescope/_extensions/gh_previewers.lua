@@ -9,16 +9,18 @@ local P = {}
 P.gh_gist_preview = defaulter(function(opts)
 	return previewers.new_buffer_previewer({
 		get_buffer_by_name = function(_, entry)
-			return entry.value
+			return entry.id
 		end,
 
 		define_preview = function(self, entry)
-			local tmp_table = vim.split(entry.value, "\t")
-			local gh_command = { "gh", "gist", "view", tmp_table[1] }
+			local gh_command = {}
 
-			if vim.tbl_isempty(tmp_table) then
+			if entry.id then
+				gh_command = { "gh", "gist", "view", entry.id }
+			else
 				gh_command({ "echo", "empty" })
 			end
+
 			putils.job_maker(gh_command, self.state.bufnr, {
 				value = entry.value,
 				bufname = self.state.bufname,

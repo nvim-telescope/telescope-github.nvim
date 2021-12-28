@@ -112,10 +112,13 @@ Telescope gh issues author=windwp label=bug
 | secret    | Filter by secret                   |
 
 ### Key mappings
-| key     | Usage                 |
-|---------|-----------------------|
-| `<cr>`  | append gist to buffer |
-| `<c-t>` | open web              |
+| key     | Usage                    |
+|---------|--------------------------|
+| `<cr>`  | append gist to buffer    |
+| `<c-t>` | open web                 |
+| `<c-e>` | edit gist in TMUX window |
+| `<c-d>` | delete selected gist     |
+| `<c-n>` | create new empty gist    |
 
 ### Workflow runs
 #### Options Filter

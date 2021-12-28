@@ -84,14 +84,43 @@ end
 A.gh_gist_append = function(prompt_bufnr)
 	local selection = action_state.get_selected_entry(prompt_bufnr)
 	actions.close(prompt_bufnr)
-	local tmp_table = vim.split(selection.value, "\t")
-	if vim.tbl_isempty(tmp_table) then
+	if selection.id == "" then
 		return
 	end
-	local gist_id = tmp_table[1]
-	local text = utils.get_os_command_output({ "gh", "gist", "view", gist_id, "-r" })
+	local text = utils.get_os_command_output({ "gh", "gist", "view", selection.id, "-r" })
 	if text and vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
 		vim.api.nvim_put(text, "b", true, true)
+	end
+end
+
+A.gh_gist_create = function(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	local ans = vim.fn.input("[GIST] Enter description: ")
+	if ans == "" then
+		return
+	end
+	os.execute("echo 'new gist\r\n' | gh gist create -d '" .. ans .. "' -")
+end
+
+A.gh_gist_edit = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	if selection.id == "" then
+		return
+	end
+	vim.cmd("! tmux neww gh gist edit " .. selection.id)
+end
+
+A.gh_gist_delete = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	if selection.id == "" then
+		return
+	end
+	local ans = vim.fn.input("[GIST] are you sure you want to delete the gist? y/n: ")
+	if ans == "y" then
+		print("Deleting the gist: ", selection.id)
+		os.execute("gh gist delete " .. selection.id)
 	end
 end
 

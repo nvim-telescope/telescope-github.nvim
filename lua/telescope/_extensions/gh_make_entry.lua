@@ -1,6 +1,5 @@
 local entry_display = require("telescope.pickers.entry_display")
 local gh_make_entry = {}
--- local utils = require('telescope.utils')
 
 function gh_make_entry.gen_from_run(opts)
 	opts = opts or {}
@@ -78,4 +77,50 @@ function gh_make_entry.gen_from_run(opts)
 	end
 end
 
+function gh_make_entry.gen_from_gist(opts)
+	opts = opts or {}
+
+	local displayer = entry_display.create({
+		separator = "|",
+		items = {
+			{ width = 40 },
+			{ width = 2 },
+			{ width = 6 },
+			{ remaining = true },
+		},
+	})
+
+	local make_display = function(entry)
+		local empty_space = ""
+		return displayer({
+			entry.value,
+			entry.files,
+			entry.visibility,
+			entry.age,
+			entry.id,
+		})
+	end
+
+	return function(entry)
+		if entry == "" then
+			return nil
+		end
+		local tmp_table = vim.split(entry, "\t")
+		local id = tmp_table[1] or ""
+		local description = tmp_table[2] or ""
+		local files = tmp_table[3] or ""
+		local visibility = tmp_table[4] or ""
+		local age = tmp_table[5] or ""
+
+		return {
+			age = age,
+			display = make_display,
+			files = files,
+			id = id,
+			ordinal = entry,
+			value = description,
+			visibility = visibility,
+		}
+	end
+end
 return gh_make_entry
