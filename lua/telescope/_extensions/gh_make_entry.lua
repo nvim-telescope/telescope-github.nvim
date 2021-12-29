@@ -91,7 +91,6 @@ function gh_make_entry.gen_from_gist(opts)
 	})
 
 	local make_display = function(entry)
-		local empty_space = ""
 		return displayer({
 			entry.value,
 			entry.files,
@@ -123,4 +122,68 @@ function gh_make_entry.gen_from_gist(opts)
 		}
 	end
 end
+
+function gh_make_entry.gen_from_secret(opts)
+	opts = opts or {}
+
+	-- TODO: pass secret type, so far only repository supported
+	local icons = {
+		repository = "R",
+		environment = "E",
+		organization = "O",
+		user = "U",
+	}
+
+	local status_map = {
+		["repository"] = { icon = icons.repository, hl = "TelescopeResultsDiffAdd" },
+		["environment"] = { icon = icons.failed, hl = "TelescopeResultsDiffUntracked" },
+		["organization"] = { icon = icons.failed, hl = "TelescopeResultsDiffDelete" },
+		["user"] = { icon = icons.working, hl = "TelescopeResultsDiffChange" },
+	}
+
+	local displayer = entry_display.create({
+		separator = "|",
+		items = {
+			{ width = 2 },
+			{ width = 40 },
+			{ remaining = true },
+		},
+	})
+
+	local status_x = {}
+	if opts.environment then
+		status_x = status_map["environment"]
+	elseif opts.organization then
+		status_x = status_map["organization"]
+	elseif opts.user then
+		status_x = status_map["user"]
+	else
+		status_x = status_map["repository"]
+	end
+
+	local make_display = function(entry)
+		return displayer({
+			{ status_x.icon or " ", status_x.hl },
+			entry.value,
+			entry.age,
+		})
+	end
+
+	return function(entry)
+		if entry == "" then
+			return nil
+		end
+		local tmp_table = vim.split(entry, "\t")
+		local name = tmp_table[1] or ""
+		local age = tmp_table[2] or ""
+
+		return {
+			display = make_display,
+			age = age,
+			value = name,
+			ordinal = entry,
+		}
+	end
+end
+
 return gh_make_entry

@@ -120,6 +120,20 @@ Telescope gh issues author=windwp label=bug
 | `<c-d>` | delete selected gist     |
 | `<c-n>` | create new empty gist    |
 
+### Secret
+
+**Note: only repository secrets are supported for now**
+
+[Detail](https://cli.github.com/manual/gh_secret_list)
+
+### Key mappings
+| key     | Usage                           |
+|---------|---------------------------------|
+| `<cr>`  | append secret name to buffer    |
+| `<c-e>` | set new secret value            |
+| `<c-n>` | set new secret (name and value) |
+| `<c-d>` | delete selected secret          |
+
 ### Workflow runs
 #### Options Filter
 [Detail](https://cli.github.com/manual/gh_run_list)

@@ -124,6 +124,52 @@ A.gh_gist_delete = function(prompt_bufnr)
 	end
 end
 
+A.gh_secret_append = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	if selection.value == "" then
+		return
+	end
+	if vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
+		vim.api.nvim_put({ selection.value }, "b", true, true)
+	end
+end
+
+A.gh_secret_remove = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	if selection.value == "" then
+		return
+	end
+	local ans = vim.fn.input("[SECRET] are you sure you want to delete the secret? y/n: ")
+	if ans == "y" then
+		print("Deleting the secret: ", selection.value)
+		os.execute("gh secret remove " .. selection.value)
+	end
+end
+
+A.gh_secret_set_new = function(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	local secret_name = vim.fn.input("[SECRET] Enter secret name: ")
+	local secret_body = vim.fn.input("[SECRET] Enter secret value: ")
+	if secret_name == "" or secret_body == "" then
+		return
+	end
+	print("Creating the secret: ", secret_name)
+	os.execute("gh secret set " .. secret_name .. " -b " .. secret_body)
+end
+
+A.gh_secret_set = function(prompt_bufnr)
+	local selection = action_state.get_selected_entry(prompt_bufnr)
+	actions.close(prompt_bufnr)
+	local secret_body = vim.fn.input("[SECRET] Enter secret value: ")
+	if secret_body == "" then
+		return
+	end
+	print("Setting the secret: ", selection.value)
+	os.execute("gh secret set " .. selection.value .. " -b " .. secret_body)
+end
+
 A.gh_pr_v_toggle = function(prompt_bufnr)
 	local status = state.get_status(prompt_bufnr)
 	if status.gh_pr_preview == "diff" then

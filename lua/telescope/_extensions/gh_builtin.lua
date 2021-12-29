@@ -211,6 +211,35 @@ B.gh_gist = function(opts)
 	end)
 end
 
+B.gh_secret = function(opts)
+	opts = opts or {}
+	local opts_query = parse_opts(opts, "secret")
+	local title = "Secret"
+	local cmd = vim.tbl_flatten({ "gh", "secret", "list", opts_query })
+	msgLoadingPopup("Loading " .. title, cmd, function(results)
+		if results[1] == "" then
+			print("Empty " .. title)
+			return
+		end
+		pickers.new(opts, {
+			prompt_title = title,
+			finder = finders.new_table({
+				results = results,
+				entry_maker = gh_e.gen_from_secret(opts),
+			}),
+			previewer = gh_p.gh_secret_preview.new(opts),
+			sorter = conf.file_sorter(opts),
+			attach_mappings = function(_, map)
+				actions.select_default:replace(gh_a.gh_secret_append)
+				map("i", "<c-e>", gh_a.gh_secret_set)
+				map("i", "<c-n>", gh_a.gh_secret_set_new)
+				map("i", "<c-d>", gh_a.gh_secret_remove)
+				return true
+			end,
+		}):find()
+	end)
+end
+
 B.gh_run = function(opts)
 	opts = opts or {}
 	opts.limit = opts.limit or 100

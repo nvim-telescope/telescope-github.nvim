@@ -31,6 +31,25 @@ P.gh_gist_preview = defaulter(function(opts)
 	})
 end, {})
 
+P.gh_secret_preview = defaulter(function(opts)
+	return previewers.new_buffer_previewer({
+		get_buffer_by_name = function(_, entry)
+			return entry.id
+		end,
+
+		define_preview = function(self, entry)
+			local gh_command = { "echo", "Unable to preview secrets" }
+
+			putils.job_maker(gh_command, self.state.bufnr, {
+				value = entry.value,
+				bufname = self.state.bufname,
+				cwd = opts.cwd,
+			})
+			putils.regex_highlighter(self.state.bufnr, "text")
+		end,
+	})
+end, {})
+
 P.gh_pr_preview = defaulter(function(opts)
 	return previewers.new_buffer_previewer({
 		get_buffer_by_name = function(_, entry)
