@@ -100,7 +100,7 @@ Telescope gh issues author=windwp label=bug
 
 | key     | Usage    |
 |---------|----------|
-| `<cr>`  | nothing  |
+| `<cr>`  | insert a reference to the issue |
 | `<c-t>` | open web |
 
 ### Gist
