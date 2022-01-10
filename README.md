@@ -1,10 +1,23 @@
 # Telescope-github.nvim
 Integration with [github cli](https://cli.github.com/)
 
-#### Installation
-you need to install github cli (version 1.11 or greater) first
+### Installation
+you need to install github cli (version 2.2.0 or greater) first
 [Install Github cli](https://github.com/cli/cli#installation)
 
+#### Packer
+```lua
+use {
+    "nvim-telescope/telescope.nvim",
+    requires = {
+        { "nvim-lua/plenary.nvim" },
+        { "nvim-telescope/telescope-github.nvim" },
+    },
+}
+
+```
+
+#### vim-plug
 ```viml
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -48,8 +61,10 @@ Telescope gh issues author=windwp label=bug
 
 | Query     | filter                             |
 |-----------|------------------------------------|
+| author    | Filter by author                   |
 | assignee  | Filter by assignee                 |
 | label     | Filter by label                    |
+| search    | Filter by query                    |
 | state     | Filter by state: {open,closed,all} |
 | base      | Filter by base branch              |
 | limit     | limit default = 100                |
@@ -63,6 +78,7 @@ Telescope gh issues author=windwp label=bug
 | `<c-e>` | toggle to view detail or diff |
 | `<c-r>` | merge request                 |
 | `<c-a>` | approve pull request          |
+| `<c-f>` | browse modified files         |
 
 ### Issue
 
@@ -76,6 +92,7 @@ Telescope gh issues author=windwp label=bug
 | mention   | Filter by mention                  |
 | label     | Filter by label                    |
 | milestone | Filter by milestone                |
+| search    | Filter by query                    |
 | state     | Filter by state: {open,closed,all} |
 | limit     | limit default = 100                |
 
@@ -96,10 +113,27 @@ Telescope gh issues author=windwp label=bug
 | secret    | Filter by secret                   |
 
 ### Key mappings
-| key     | Usage                 |
-|---------|-----------------------|
-| `<cr>`  | append gist to buffer |
-| `<c-t>` | open web              |
+| key     | Usage                    |
+|---------|--------------------------|
+| `<cr>`  | append gist to buffer    |
+| `<c-t>` | open web                 |
+| `<c-e>` | edit gist in TMUX window |
+| `<c-d>` | delete selected gist     |
+| `<c-n>` | create new empty gist    |
+
+### Secret
+
+**Note: only repository secrets are supported for now**
+
+[Detail](https://cli.github.com/manual/gh_secret_list)
+
+### Key mappings
+| key     | Usage                           |
+|---------|---------------------------------|
+| `<cr>`  | append secret name to buffer    |
+| `<c-e>` | set new secret value            |
+| `<c-n>` | set new secret (name and value) |
+| `<c-d>` | delete selected secret          |
 
 ### Workflow runs
 #### Options Filter
@@ -121,3 +155,4 @@ Telescope gh issues author=windwp label=bug
 | `<cr>`  | open workflow summary/run logs in new window |
 | `<c-t>` | open web                                     |
 | `<c-r>` | request run rerun                            |
+| `<c-a>` | request run cancel                           |
