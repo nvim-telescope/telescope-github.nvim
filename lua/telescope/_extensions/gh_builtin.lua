@@ -36,7 +36,11 @@ local function parse_opts(opts, target)
 
 	for _, value in pairs(tmp_table) do
 		if opts[value] then
-			table.insert(query, { "--" .. value, opts[value] })
+			if opts[value] == " " then
+				table.insert(query, { "--" .. value })
+			else
+				table.insert(query, { "--" .. value, opts[value] })
+			end
 		end
 	end
 	return query
