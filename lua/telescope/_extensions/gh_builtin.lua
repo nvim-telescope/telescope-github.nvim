@@ -19,9 +19,9 @@ local function parse_opts(opts, target)
   local query = {}
   local tmp_table = {}
   if target == "issue" then
-    tmp_table = { "author", "assigner", "mention", "label", "milestone", "search", "state", "limit" }
+    tmp_table = { "author", "assignee", "mention", "label", "milestone", "search", "state", "limit" }
   elseif target == "pr" then
-    tmp_table = { "assigner", "label", "search", "state", "base", "limit" }
+    tmp_table = { "assignee", "label", "search", "state", "base", "limit" }
   elseif target == "run" then
     tmp_table = { "workflow", "limit" }
   elseif target == "gist" then
