@@ -108,7 +108,7 @@ B.gh_issues = function(opts)
 			}),
 			sorter = conf.file_sorter(opts),
 			attach_mappings = function(_, map)
-				actions.select_default:replace(actions.close)
+				actions.select_default:replace(gh_a.gh_issue_insert)
 				map("i", "<c-t>", gh_a.gh_web_view("issue"))
 				return true
 			end,

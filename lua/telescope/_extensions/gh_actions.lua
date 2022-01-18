@@ -64,6 +64,14 @@ local function gh_qf_action(pr_number, action, msg)
 	)
 end
 -- a for actions
+A.gh_issue_insert = function(prompt_bufnr)
+	-- Insert “#10” if issue 10 was selected
+	local issue_number = close_telescope_prompt(prompt_bufnr)
+	if vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
+		vim.api.nvim_put({ "#"..issue_number }, "b", true, true)
+	end
+end
+
 A.gh_pr_checkout = function(prompt_bufnr)
 	local pr_number = close_telescope_prompt(prompt_bufnr)
 	gh_qf_action(pr_number, "checkout", "Checking out pull request #")
