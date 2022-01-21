@@ -80,12 +80,18 @@ end
 A.gh_web_view = function(type)
   return function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
+    local id = ""
     actions.close(prompt_bufnr)
     local tmp_table = vim.split(selection.value, "\t")
     if vim.tbl_isempty(tmp_table) then
       return
     end
-    os.execute("gh " .. type .. " view --web " .. tmp_table[1])
+    if type == "gist" then
+      id = selection.id
+    else
+      id = tmp_table[1]
+    end
+    os.execute("gh " .. type .. " view --web " .. id)
   end
 end
 
