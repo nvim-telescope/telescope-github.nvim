@@ -142,7 +142,7 @@ B.gh_pull_request = function(opts)
         map("i", "<c-t>", gh_a.gh_web_view "pr")
         map("i", "<c-a>", gh_a.gh_pr_approve)
         map("i", "<c-f>", function(prompt_bufnr)
-          local selection = action_state.get_selected_entry(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
           actions.close(prompt_bufnr)
           local pr_number = vim.split(selection.value, "\t")[1]
 

@@ -8,7 +8,7 @@ local flatten = vim.tbl_flatten
 local A = {}
 
 local function close_telescope_prompt(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   local tmp_table = vim.split(selection.value, "\t")
   if vim.tbl_isempty(tmp_table) then
@@ -79,7 +79,7 @@ end
 
 A.gh_web_view = function(type)
   return function(prompt_bufnr)
-    local selection = action_state.get_selected_entry(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
     local tmp_table = vim.split(selection.value, "\t")
     if vim.tbl_isempty(tmp_table) then
@@ -90,7 +90,7 @@ A.gh_web_view = function(type)
 end
 
 A.gh_gist_append = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" then
     return
@@ -111,7 +111,7 @@ A.gh_gist_create = function(prompt_bufnr)
 end
 
 A.gh_gist_edit = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" then
     return
@@ -120,7 +120,7 @@ A.gh_gist_edit = function(prompt_bufnr)
 end
 
 A.gh_gist_delete = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" then
     return
@@ -133,7 +133,7 @@ A.gh_gist_delete = function(prompt_bufnr)
 end
 
 A.gh_secret_append = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.value == "" then
     return
@@ -144,7 +144,7 @@ A.gh_secret_append = function(prompt_bufnr)
 end
 
 A.gh_secret_remove = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.value == "" then
     return
@@ -168,7 +168,7 @@ A.gh_secret_set_new = function(prompt_bufnr)
 end
 
 A.gh_secret_set = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   local secret_body = vim.fn.input "[SECRET] Enter secret value: "
   if secret_body == "" then
@@ -185,7 +185,7 @@ A.gh_pr_v_toggle = function(prompt_bufnr)
   else
     status.gh_pr_preview = "diff"
   end
-  local entry = action_state.get_selected_entry(prompt_bufnr)
+  local entry = action_state.get_selected_entry()
   action_state.get_current_picker(prompt_bufnr).previewer:preview(entry, status)
 end
 
@@ -211,7 +211,7 @@ A.gh_pr_approve = function(prompt_bufnr)
 end
 
 A.gh_run_web_view = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" then
     return
@@ -220,7 +220,7 @@ A.gh_run_web_view = function(prompt_bufnr)
 end
 
 A.gh_run_rerun = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" then
     return
@@ -230,7 +230,7 @@ A.gh_run_rerun = function(prompt_bufnr)
 end
 
 A.gh_run_cancel = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
   if selection.id == "" or selection.active == "completed" then
     return
@@ -241,7 +241,7 @@ end
 
 A.gh_run_view_log = function(opts)
   return function(prompt_bufnr)
-    local selection = action_state.get_selected_entry(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
     if selection.id == "" then
       return
