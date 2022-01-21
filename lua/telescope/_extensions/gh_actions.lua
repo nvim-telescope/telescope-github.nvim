@@ -297,25 +297,28 @@ A.gh_run_view_log = function(opts)
       end))
     end
 
-    local job = Job
-      :new({
-        enable_recording = true,
-        command = "gh",
-        args = flatten(args),
-        on_stdout = on_output,
-        on_stderr = on_output,
+    local job = Job:new {
+      enable_recording = true,
+      command = "gh",
+      args = flatten(args),
+      on_stdout = on_output,
+      on_stderr = on_output,
 
-        on_exit = function(_, status)
-          if status == 0 then
-            if run_completed then
-              print "Log retrieval completed!"
-            else
-              print "Workflow run completed!"
-            end
+      on_exit = function(_, status)
+        if status == 0 then
+          if run_completed then
+            print "Log retrieval completed!"
+          else
+            print "Workflow run completed!"
           end
-        end,
-      })
-      :sync()
+        end
+      end,
+    }
+    if opts.mode == "sync" then
+      job:sync(opts.timeout, opts.wait_interval)
+    else
+      job:start()
+    end
   end
 end
 

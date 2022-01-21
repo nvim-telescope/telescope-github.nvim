@@ -250,6 +250,10 @@ B.gh_run = function(opts)
   opts.wincmd = opts.wincmd or "botright vnew"
   opts.wrap = opts.wrap or "nowrap"
   opts.filetype = opts.filetype or "bash"
+  opts.timeout = opts.timeout or 1000
+  opts.wait_interval = opts.wait_interval or 2
+  opts.mode = "async"
+
   if opts.cleanmeta == nil then
     opts.cleanmeta = true
   end
