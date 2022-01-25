@@ -284,6 +284,8 @@ A.gh_run_view_log = function(opts)
       end
       local cleanmsg = function(msgtoclean)
         local msgwithoutdate = string.match(msgtoclean, "T%d%d:%d%d:%d%d.%d+Z(.+)$")
+        msgwithoutdate = string.gsub(msgwithoutdate, "[\27\155][][()#;?%d]*[A-PRZcf-ntqry=><~]", "")
+
         if msgwithoutdate ~= nil then
           return msgwithoutdate
         else
