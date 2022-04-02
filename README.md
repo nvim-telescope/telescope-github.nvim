@@ -111,6 +111,7 @@ Telescope gh issues author=windwp label=bug
 |-----------|------------------------------------|
 | public    | Filter by public                   |
 | secret    | Filter by secret                   |
+| limit     | limit default = 100                |
 
 ### Key mappings
 | key     | Usage                    |
