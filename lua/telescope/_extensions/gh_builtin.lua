@@ -25,7 +25,7 @@ local function parse_opts(opts, target)
   elseif target == "run" then
     tmp_table = { "workflow", "limit" }
   elseif target == "gist" then
-    tmp_table = { "public", "secret" }
+    tmp_table = { "public", "secret", "limit" }
     if opts.public then
       opts.public = " "
     end
