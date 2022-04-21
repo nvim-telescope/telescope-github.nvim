@@ -72,6 +72,26 @@ A.gh_issue_insert = function(prompt_bufnr)
   end
 end
 
+A.gh_insert_markdown_link = function(prompt_bufnr)
+  local issue_number = close_telescope_prompt(prompt_bufnr)
+  local output = utils.get_os_command_output {
+    "gh",
+    "issue",
+    "view",
+    issue_number,
+    "--json",
+    "number,title,url",
+    "--template",
+    '{{printf "%.0f\\x1f%s\\x1f%s" .number .title .url}}',
+  }
+  if output then
+    local tmp_table = vim.split(output[1], "\x1f")
+    if vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
+      vim.api.nvim_put({ string.format("[%s (#%s)](%s)", tmp_table[2], tmp_table[1], tmp_table[3]) }, "b", true, true)
+    end
+  end
+end
+
 A.gh_pr_checkout = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
   gh_qf_action(pr_number, "checkout", "Checking out pull request #")
