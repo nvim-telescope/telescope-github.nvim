@@ -110,7 +110,7 @@ B.gh_issues = function(opts)
       attach_mappings = function(_, map)
         actions.select_default:replace(gh_a.gh_issue_insert)
         map("i", "<c-t>", gh_a.gh_web_view "issue")
-        map("i", "<c-l>", gh_a.gh_insert_markdown_link)
+        map("i", "<c-l>", gh_a.gh_issue_insert_markdown_link)
         return true
       end,
     }):find()
