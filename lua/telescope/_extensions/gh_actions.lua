@@ -78,9 +78,14 @@ A.gh_issue_insert_markdown_link = function(prompt_bufnr)
   end
   local issue_number = close_telescope_prompt(prompt_bufnr)
   local text = utils.get_os_command_output {
-    "gh", "issue", "view", issue_number,
-    "--json", "number,title,url",
-    "--template", '{{printf "[%s (#%.0f)](%s)" .title .number .url}}',
+    "gh",
+    "issue",
+    "view",
+    issue_number,
+    "--json",
+    "number,title,url",
+    "--template",
+    '{{printf "[%s (#%.0f)](%s)" .title .number .url}}',
   }
   if text then
     vim.api.nvim_put(text, "b", true, true)
