@@ -85,11 +85,10 @@ A.gh_issue_insert_markdown_link = function(prompt_bufnr)
     "--json",
     "number,title,url",
     "--template",
-    '{{printf "%.0f\\x1f%s\\x1f%s" .number .title .url}}',
+    '{{printf "[%s (#%.0f)](%s)" .title .number .url}}',
   }
   if text then
-    local tmp_table = vim.split(text[1], "\x1f")
-    vim.api.nvim_put({ string.format("[%s (#%s)](%s)", tmp_table[2], tmp_table[1], tmp_table[3]) }, "b", true, true)
+    vim.api.nvim_put(text, "b", true, true)
   end
 end
 
