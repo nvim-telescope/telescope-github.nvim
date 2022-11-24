@@ -19,13 +19,13 @@ local function parse_opts(opts, target)
   local query = {}
   local tmp_table = {}
   if target == "issue" then
-    tmp_table = { "author", "assignee", "mention", "label", "milestone", "search", "state", "limit" }
+    tmp_table = { "author", "assignee", "mention", "label", "milestone", "search", "state", "limit", "repo" }
   elseif target == "pr" then
-    tmp_table = { "assignee", "label", "search", "state", "base", "limit" }
+    tmp_table = { "assignee", "label", "search", "state", "base", "limit", "repo" }
   elseif target == "run" then
-    tmp_table = { "workflow", "limit" }
+    tmp_table = { "workflow", "limit", "repo" }
   elseif target == "gist" then
-    tmp_table = { "public", "secret", "limit" }
+    tmp_table = { "public", "secret", "limit", "repo" }
     if opts.public then
       opts.public = " "
     end
