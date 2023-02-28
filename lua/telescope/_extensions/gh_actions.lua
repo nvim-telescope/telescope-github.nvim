@@ -92,6 +92,28 @@ A.gh_issue_insert_markdown_link = function(prompt_bufnr)
   end
 end
 
+A.gh_issue_develop = function(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+  actions.close(prompt_bufnr)
+  local tmp_table = vim.split(selection.value, "\t")
+  if vim.tbl_isempty(tmp_table) then
+    return
+  end
+  local id = tmp_table[1]
+  -- We can't use os.execute here because it takes a bit
+  vim.fn.jobstart(
+    "echo \"Creating a new branch ...\" && gh issue develop " .. id .. " --checkout && echo \"Done!\"",
+    {
+      on_stdout = function(_channel_id, data, _name)
+        if data[1] ~= "" then
+          print(data[1])
+        end
+      end
+    }
+  )
+end
+
+
 A.gh_pr_checkout = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
   gh_qf_action(pr_number, "checkout", "Checking out pull request #")

@@ -111,6 +111,7 @@ B.gh_issues = function(opts)
         actions.select_default:replace(gh_a.gh_issue_insert)
         map("i", "<c-t>", gh_a.gh_web_view "issue")
         map("i", "<c-l>", gh_a.gh_issue_insert_markdown_link)
+        map("i", "<c-z>", gh_a.gh_issue_develop)
         return true
       end,
     }):find()

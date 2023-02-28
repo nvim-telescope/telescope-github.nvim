@@ -103,6 +103,7 @@ Telescope gh issues author=windwp label=bug
 | `<cr>`  | insert a reference to the issue |
 | `<c-t>` | open web |
 | `<c-l>` | insert a markdown-link to the issue |
+| `<c-z>` | create a branch for the issue and check it out locally |
 
 ### Gist
 #### Options Filter
