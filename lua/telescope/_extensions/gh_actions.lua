@@ -16,13 +16,13 @@ local function close_telescope_prompt(prompt_bufnr)
   end
   return tmp_table[1]
 end
-local function gh_qf_action(pr_number, action, msg)
-  if pr_number == nil then
+local function gh_qf_action(type, pr_or_issue_number, action, msg)
+  if pr_or_issue_number == nil then
     return
   end
 
   local qf_entry = { {
-    text = msg .. pr_number .. ", please wait ...",
+    text = msg .. pr_or_issue_number .. ", please wait ...",
   } }
 
   local on_output = function(_, line)
@@ -36,7 +36,7 @@ local function gh_qf_action(pr_number, action, msg)
   local job = Job:new {
     enable_recording = true,
     command = "gh",
-    args = flatten { "pr", action, pr_number },
+    args = flatten { type, action, pr_or_issue_number },
     on_stdout = on_output,
     on_stderr = on_output,
 
@@ -45,7 +45,7 @@ local function gh_qf_action(pr_number, action, msg)
         pcall(vim.schedule_wrap(function()
           vim.cmd [[cclose]]
         end))
-        print "Pull request completed"
+        print "Done!"
       end
     end,
   }
@@ -99,24 +99,14 @@ A.gh_issue_develop = function(prompt_bufnr)
   if vim.tbl_isempty(tmp_table) then
     return
   end
-  local id = tmp_table[1]
-  -- We can't use os.execute here because it takes a bit
-  vim.fn.jobstart(
-    "echo \"Creating a new branch ...\" && gh issue develop " .. id .. " --checkout && echo \"Done!\"",
-    {
-      on_stdout = function(_channel_id, data, _name)
-        if data[1] ~= "" then
-          print(data[1])
-        end
-      end
-    }
-  )
+  local issue_number = tmp_table[1]
+  gh_qf_action("issue", issue_number, { "develop", "--checkout" }, "Create and checkout branch for issue #")
 end
 
 
 A.gh_pr_checkout = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
-  gh_qf_action(pr_number, "checkout", "Checking out pull request #")
+  gh_qf_action("pr", pr_number, "checkout", "Checking out pull request #")
 end
 
 A.gh_web_view = function(type)
@@ -249,13 +239,13 @@ A.gh_pr_merge = function(prompt_bufnr)
     action = "-s"
   end
   if action ~= nil then
-    gh_qf_action(pr_number, { "merge", action }, "Merge pull request #")
+    gh_qf_action("pr", pr_number, { "merge", action }, "Merge pull request #")
   end
 end
 
 A.gh_pr_approve = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
-  gh_qf_action(pr_number, { "review", "--approve" }, "Approve pull request #")
+  gh_qf_action("pr", pr_number, { "review", "--approve" }, "Approve pull request #")
 end
 
 A.gh_run_web_view = function(prompt_bufnr)
