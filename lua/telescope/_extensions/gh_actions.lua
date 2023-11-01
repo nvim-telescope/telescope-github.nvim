@@ -92,6 +92,11 @@ A.gh_issue_insert_markdown_link = function(prompt_bufnr)
   end
 end
 
+A.gh_issue_develop = function(prompt_bufnr)
+  local issue_number = close_telescope_prompt(prompt_bufnr)
+  gh_qf_action(issue_number, { "issue", "develop", "--checkout" }, "Checking out issue #")
+end
+
 A.gh_pr_checkout = function(prompt_bufnr)
   local pr_number = close_telescope_prompt(prompt_bufnr)
   gh_qf_action(pr_number, { "pr", "checkout" }, "Checking out pull request #")
