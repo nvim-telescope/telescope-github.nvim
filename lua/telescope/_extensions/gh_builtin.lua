@@ -91,29 +91,31 @@ B.gh_issues = function(opts)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = make_entry.gen_from_string(opts),
-      },
-      previewer = previewers.new_termopen_previewer {
-        get_command = function(entry)
-          local tmp_table = vim.split(entry.value, "\t")
-          if vim.tbl_isempty(tmp_table) then
-            return { "echo", "" }
-          end
-          return { "gh", "issue", "view", tmp_table[1] }
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_string(opts),
+        },
+        previewer = previewers.new_termopen_previewer {
+          get_command = function(entry)
+            local tmp_table = vim.split(entry.value, "\t")
+            if vim.tbl_isempty(tmp_table) then
+              return { "echo", "" }
+            end
+            return { "gh", "issue", "view", tmp_table[1] }
+          end,
+        },
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_, map)
+          actions.select_default:replace(gh_a.gh_issue_insert)
+          map("i", "<c-t>", gh_a.gh_web_view "issue")
+          map("i", "<c-l>", gh_a.gh_issue_insert_markdown_link)
+          return true
         end,
-      },
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(_, map)
-        actions.select_default:replace(gh_a.gh_issue_insert)
-        map("i", "<c-t>", gh_a.gh_web_view "issue")
-        map("i", "<c-l>", gh_a.gh_issue_insert_markdown_link)
-        return true
-      end,
-    }):find()
+      })
+      :find()
   end)
 end
 
@@ -128,31 +130,33 @@ B.gh_pull_request = function(opts)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = make_entry.gen_from_string(opts),
-      },
-      previewer = gh_p.gh_pr_preview.new(opts),
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(_, map)
-        map("i", "<c-e>", gh_a.gh_pr_v_toggle)
-        -- can't map to <c-m
-        map("i", "<c-r>", gh_a.gh_pr_merge)
-        map("i", "<c-t>", gh_a.gh_web_view "pr")
-        map("i", "<c-a>", gh_a.gh_pr_approve)
-        map("i", "<c-f>", function(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          actions.close(prompt_bufnr)
-          local pr_number = vim.split(selection.value, "\t")[1]
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_string(opts),
+        },
+        previewer = gh_p.gh_pr_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_, map)
+          map("i", "<c-e>", gh_a.gh_pr_v_toggle)
+          -- can't map to <c-m
+          map("i", "<c-r>", gh_a.gh_pr_merge)
+          map("i", "<c-t>", gh_a.gh_web_view "pr")
+          map("i", "<c-a>", gh_a.gh_pr_approve)
+          map("i", "<c-f>", function(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            actions.close(prompt_bufnr)
+            local pr_number = vim.split(selection.value, "\t")[1]
 
-          B.gh_pull_request_files(opts, pr_number)
-        end)
-        actions.select_default:replace(gh_a.gh_pr_checkout)
-        return true
-      end,
-    }):find()
+            B.gh_pull_request_files(opts, pr_number)
+          end)
+          actions.select_default:replace(gh_a.gh_pr_checkout)
+          return true
+        end,
+      })
+      :find()
   end)
 end
 
@@ -174,14 +178,16 @@ B.gh_pull_request_files = function(opts, pr_number)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = make_entry.gen_from_file(),
-      },
-      previewer = conf.file_previewer(opts),
-    }):find()
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = make_entry.gen_from_file(),
+        },
+        previewer = conf.file_previewer(opts),
+      })
+      :find()
   end)
 end
 
@@ -196,23 +202,25 @@ B.gh_gist = function(opts)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = gh_e.gen_from_gist(opts),
-      },
-      previewer = gh_p.gh_gist_preview.new(opts),
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(_, map)
-        actions.select_default:replace(gh_a.gh_gist_append)
-        map("i", "<c-t>", gh_a.gh_web_view "gist")
-        map("i", "<c-e>", gh_a.gh_gist_edit)
-        map("i", "<c-d>", gh_a.gh_gist_delete)
-        map("i", "<c-n>", gh_a.gh_gist_create)
-        return true
-      end,
-    }):find()
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = gh_e.gen_from_gist(opts),
+        },
+        previewer = gh_p.gh_gist_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_, map)
+          actions.select_default:replace(gh_a.gh_gist_append)
+          map("i", "<c-t>", gh_a.gh_web_view "gist")
+          map("i", "<c-e>", gh_a.gh_gist_edit)
+          map("i", "<c-d>", gh_a.gh_gist_delete)
+          map("i", "<c-n>", gh_a.gh_gist_create)
+          return true
+        end,
+      })
+      :find()
   end)
 end
 
@@ -226,22 +234,24 @@ B.gh_secret = function(opts)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = gh_e.gen_from_secret(opts),
-      },
-      previewer = gh_p.gh_secret_preview.new(opts),
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(_, map)
-        actions.select_default:replace(gh_a.gh_secret_append)
-        map("i", "<c-e>", gh_a.gh_secret_set)
-        map("i", "<c-n>", gh_a.gh_secret_set_new)
-        map("i", "<c-d>", gh_a.gh_secret_remove)
-        return true
-      end,
-    }):find()
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = gh_e.gen_from_secret(opts),
+        },
+        previewer = gh_p.gh_secret_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_, map)
+          actions.select_default:replace(gh_a.gh_secret_append)
+          map("i", "<c-e>", gh_a.gh_secret_set)
+          map("i", "<c-n>", gh_a.gh_secret_set_new)
+          map("i", "<c-d>", gh_a.gh_secret_remove)
+          return true
+        end,
+      })
+      :find()
   end)
 end
 
@@ -266,22 +276,24 @@ B.gh_run = function(opts)
       print("Empty " .. title)
       return
     end
-    pickers.new(opts, {
-      prompt_title = title,
-      finder = finders.new_table {
-        results = results,
-        entry_maker = gh_e.gen_from_run(opts),
-      },
-      previewer = gh_p.gh_run_preview.new(opts),
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(_, map)
-        map("i", "<c-r>", gh_a.gh_run_rerun)
-        map("i", "<c-t>", gh_a.gh_run_web_view)
-        map("i", "<c-a>", gh_a.gh_run_cancel)
-        actions.select_default:replace(gh_a.gh_run_view_log(opts))
-        return true
-      end,
-    }):find()
+    pickers
+      .new(opts, {
+        prompt_title = title,
+        finder = finders.new_table {
+          results = results,
+          entry_maker = gh_e.gen_from_run(opts),
+        },
+        previewer = gh_p.gh_run_preview.new(opts),
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(_, map)
+          map("i", "<c-r>", gh_a.gh_run_rerun)
+          map("i", "<c-t>", gh_a.gh_run_web_view)
+          map("i", "<c-a>", gh_a.gh_run_cancel)
+          actions.select_default:replace(gh_a.gh_run_view_log(opts))
+          return true
+        end,
+      })
+      :find()
   end)
 end
 
