@@ -5,11 +5,11 @@ on: [pull_request]
 jobs:
   stylua:
     name: stylua
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: JohnnyMorganz/stylua-action@1.0.0
+      - uses: actions/checkout@v6
+      - uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
           args: --color always --check lua/
-
