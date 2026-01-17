@@ -61,11 +61,11 @@ local function msgLoadingPopup(msg, cmd, complete_fn)
     line = row,
     width = width,
   })
-  vim.api.nvim_win_set_option(prompt_win, "winhl", "Normal:TelescopeNormal")
-  vim.api.nvim_win_set_option(prompt_win, "winblend", 0)
+  vim.api.nvim_set_option_value("winhl", "Normal:TelescopeNormal", { win = prompt_win })
+  vim.api.nvim_set_option_value("winblend", 0, { win = prompt_win })
   local prompt_border_win = prompt_opts.border and prompt_opts.border.win_id
   if prompt_border_win then
-    vim.api.nvim_win_set_option(prompt_border_win, "winhl", "Normal:TelescopePromptBorder")
+    vim.api.nvim_set_option_value("winhl", "Normal:TelescopePromptBorder", { win = prompt_border_win })
   end
   vim.defer_fn(
     vim.schedule_wrap(function()
@@ -84,7 +84,7 @@ B.gh_issues = function(opts)
   opts = opts or {}
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts, "issue")
-  local cmd = vim.tbl_flatten { "gh", "issue", "list", opts_query }
+  local cmd = vim.iter({ "gh", "issue", "list", opts_query }):flatten():totable()
   local title = "Issues"
   msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1] == "" then
@@ -123,7 +123,7 @@ B.gh_pull_request = function(opts)
   opts = opts or {}
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts, "pr")
-  local cmd = vim.tbl_flatten { "gh", "pr", "list", opts_query }
+  local cmd = vim.iter({ "gh", "pr", "list", opts_query }):flatten():totable()
   local title = "Pull Requests"
   msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1] == "" then
@@ -196,7 +196,7 @@ B.gh_gist = function(opts)
   opts.limit = opts.limit or 100
   local opts_query = parse_opts(opts, "gist")
   local title = "Gist"
-  local cmd = vim.tbl_flatten { "gh", "gist", "list", opts_query }
+  local cmd = vim.iter({ "gh", "gist", "list", opts_query }):flatten():totable()
   msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
@@ -228,7 +228,7 @@ B.gh_secret = function(opts)
   opts = opts or {}
   local opts_query = parse_opts(opts, "secret")
   local title = "Secret"
-  local cmd = vim.tbl_flatten { "gh", "secret", "list", opts_query }
+  local cmd = vim.iter({ "gh", "secret", "list", opts_query }):flatten():totable()
   msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
@@ -269,7 +269,7 @@ B.gh_run = function(opts)
     opts.cleanmeta = true
   end
   local opts_query = parse_opts(opts, "run")
-  local cmd = vim.tbl_flatten { "gh", "run", "list", opts_query }
+  local cmd = vim.iter({ "gh", "run", "list", opts_query }):flatten():totable()
   local title = "Workflow runs"
   msgLoadingPopup("Loading " .. title, cmd, function(results)
     if results[1] == "" then

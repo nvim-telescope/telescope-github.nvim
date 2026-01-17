@@ -3,7 +3,6 @@ local action_state = require "telescope.actions.state"
 local utils = require "telescope.utils"
 local Job = require "plenary.job"
 local state = require "telescope.state"
-local flatten = vim.tbl_flatten
 
 local A = {}
 
@@ -36,7 +35,7 @@ local function gh_qf_action(pr_number, action, msg)
   local job = Job:new {
     enable_recording = true,
     command = "gh",
-    args = flatten { "pr", action, pr_number },
+    args = vim.iter({ "pr", action, pr_number }):flatten():totable(),
     on_stdout = on_output,
     on_stderr = on_output,
 
@@ -67,13 +66,13 @@ end
 A.gh_issue_insert = function(prompt_bufnr)
   -- Insert “#10” if issue 10 was selected
   local issue_number = close_telescope_prompt(prompt_bufnr)
-  if vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
+  if vim.api.nvim_get_option_value("modifiable", { buf = vim.api.nvim_get_current_buf() }) then
     vim.api.nvim_put({ "#" .. issue_number }, "b", true, true)
   end
 end
 
 A.gh_issue_insert_markdown_link = function(prompt_bufnr)
-  if not (vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable")) then
+  if not (vim.api.nvim_get_option_value("modifiable", { buf = vim.api.nvim_get_current_buf() })) then
     return
   end
   local issue_number = close_telescope_prompt(prompt_bufnr)
@@ -328,7 +327,7 @@ A.gh_run_view_log = function(opts)
     local job = Job:new {
       enable_recording = true,
       command = "gh",
-      args = flatten(args),
+      args = vim.iter(args):flatten():totable(),
       on_stdout = on_output,
       on_stderr = on_output,
 
