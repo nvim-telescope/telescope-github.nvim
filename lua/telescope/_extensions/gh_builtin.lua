@@ -46,7 +46,7 @@ local function parse_opts(opts, target)
   return query
 end
 
-local function msgLoadingPopup(msg, cmd, complete_fn)
+local function msgLoadingPopup(msg, cmd, cwd, complete_fn)
   local row = math.floor((vim.o.lines - 5) / 2)
   local width = math.floor(vim.o.columns / 1.5)
   local col = math.floor((vim.o.columns - width) / 2)
@@ -69,7 +69,7 @@ local function msgLoadingPopup(msg, cmd, complete_fn)
   end
   vim.defer_fn(
     vim.schedule_wrap(function()
-      local results = utils.get_os_command_output(cmd)
+      local results = utils.get_os_command_output(cmd, cwd)
       if not pcall(vim.api.nvim_win_close, prompt_win, true) then
         log.trace("Unable to close window: ", "ghcli", "/", prompt_win)
       end
@@ -86,7 +86,7 @@ B.gh_issues = function(opts)
   local opts_query = parse_opts(opts, "issue")
   local cmd = vim.iter({ "gh", "issue", "list", opts_query }):flatten():totable()
   local title = "Issues"
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
@@ -125,7 +125,7 @@ B.gh_pull_request = function(opts)
   local opts_query = parse_opts(opts, "pr")
   local cmd = vim.iter({ "gh", "pr", "list", opts_query }):flatten():totable()
   local title = "Pull Requests"
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
@@ -170,10 +170,10 @@ B.gh_pull_request_files = function(opts, pr_number)
   local cmd = pr_number and { "gh", "pr", "view", pr_number, "--json", "files", "--jq", ".files.[].path" }
     or { "gh", "pr", "view", "--json", "files", "--jq", ".files.[].path" }
 
-  local pr_title = '"' .. utils.get_os_command_output(title_cmd)[1] .. '"'
+  local pr_title = '"' .. utils.get_os_command_output(title_cmd, opts.cwd)[1] .. '"'
   local title = "Modified Files for " .. pr_title
 
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
@@ -183,7 +183,7 @@ B.gh_pull_request_files = function(opts, pr_number)
         prompt_title = title,
         finder = finders.new_table {
           results = results,
-          entry_maker = make_entry.gen_from_file(),
+          entry_maker = make_entry.gen_from_file(opts),
         },
         previewer = conf.file_previewer(opts),
       })
@@ -197,7 +197,7 @@ B.gh_gist = function(opts)
   local opts_query = parse_opts(opts, "gist")
   local title = "Gist"
   local cmd = vim.iter({ "gh", "gist", "list", opts_query }):flatten():totable()
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
@@ -229,7 +229,7 @@ B.gh_secret = function(opts)
   local opts_query = parse_opts(opts, "secret")
   local title = "Secret"
   local cmd = vim.iter({ "gh", "secret", "list", opts_query }):flatten():totable()
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
@@ -271,7 +271,7 @@ B.gh_run = function(opts)
   local opts_query = parse_opts(opts, "run")
   local cmd = vim.iter({ "gh", "run", "list", opts_query }):flatten():totable()
   local title = "Workflow runs"
-  msgLoadingPopup("Loading " .. title, cmd, function(results)
+  msgLoadingPopup("Loading " .. title, cmd, opts.cwd, function(results)
     if results[1] == "" then
       print("Empty " .. title)
       return
